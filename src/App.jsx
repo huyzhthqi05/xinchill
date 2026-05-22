@@ -71,6 +71,8 @@ export default function QuanNuocPOS() {
     { id: 'm31', name: 'Mãng cầu L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
     { id: 'm32', name: 'Dâu tây M', price: 23000, category: 'Sinh tố', image: 'https://unsplash.com' },
     { id: 'm33', name: 'Dâu tây L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
+    { id: 'm34', name: 'Chanh đá M', price: 17000, category: 'Sữa chua', image: 'https://unsplash.com' },
+    { id: 'm35', name: 'Chanh đá L', price: 22000, category: 'Sữa chua', image: 'https://unsplash.com' },
   ];
 
   // Quản lý từ khóa tìm kiếm món ăn
