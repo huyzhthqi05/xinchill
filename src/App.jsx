@@ -101,8 +101,6 @@ export default function QuanNuocPOS() {
     { id: 'm61', name: 'Chân gà sốt Thái mix trứng non L', price: 79000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm62', name: 'Ram nướng Bình Định', price: 6000, category: 'Ăn vặt', image: 'https://unsplash.com' },
   ];
-  ];
-  ];
 
   // Quản lý từ khóa tìm kiếm món ăn
   const [searchTerm, setSearchTerm] = useState('');
