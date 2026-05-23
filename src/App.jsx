@@ -7,7 +7,14 @@ export default function QuanNuocPOS() {
   const [activeTab, setActiveTab] = useState('order');
 
   // Quản lý trạng thái thực tế của 6 bàn (Mỗi bàn có một mảng currentOrders riêng biệt)
-  const [tables, setTables] = useState([
+const [tables, setTables] = useState(() => {
+  const savedTables = localStorage.getItem('tables');
+
+  if (savedTables) {
+    return JSON.parse(savedTables);
+  }
+
+  return [
     { id: 1, status: 'empty', total: 0, currentOrders: [] },
     { id: 2, status: 'empty', total: 0, currentOrders: [] },
     { id: 3, status: 'empty', total: 0, currentOrders: [] },
@@ -28,7 +35,8 @@ export default function QuanNuocPOS() {
     { id: 18, status: 'empty', total: 0, currentOrders: [] },
     { id: 19, status: 'empty', total: 0, currentOrders: [] },
     { id: 20, status: 'empty', total: 0, currentOrders: [] },
-  ]);
+  ];
+});
 
   // Quản lý xem nhân viên đang chọn xem và thao tác cho bàn số mấy
   const [selectedTableId, setSelectedTableId] = useState(1);
@@ -304,6 +312,9 @@ export default function QuanNuocPOS() {
         setDoc(ref, { tables, lastUpdated: serverTimestamp() }, { merge: true }).catch(() => {});
       } catch (e) { console.warn('Failed to write appState to Firestore', e); }
     }, [tables]);
+  useEffect(() => {
+  localStorage.setItem('tables', JSON.stringify(tables));
+}, [tables]);
 
   // Tính tổng tiền tự động hiển thị ở chân giỏ hàng bên phải
   const totalCartPrice = currentCart.reduce((sum, order) => sum + order.price, 0);
