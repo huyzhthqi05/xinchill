@@ -68,6 +68,7 @@ const [tables, setTables] = useState(() => {
 
   // Quản lý giỏ hàng TẠM THỜI đang bấm trên màn hình (trước khi ấn Lưu tạm)
   const [currentCart, setCurrentCart] = useState([]);
+  const [firestoreLoaded, setFirestoreLoaded] = useState(false);
   const [showCartBubble, setShowCartBubble] = useState(false);
   const [lastAddedItem, setLastAddedItem] = useState('');
 
@@ -211,11 +212,16 @@ const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
     const historyRef = doc(db, 'users', user.uid, 'pos', 'orderHistory');
 
     const unsubApp = onSnapshot(appStateRef, (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        if (data.tables) setTables(data.tables);
-      }
-    });
+  if (snap.exists()) {
+    const data = snap.data();
+
+    if (data.tables) {
+      setTables(data.tables);
+    }
+  }
+
+  setFirestoreLoaded(true);
+});
 
     const unsubStats = onSnapshot(statsRef, (snap) => {
       if (snap.exists()) {
@@ -433,9 +439,9 @@ try {
     // Sync tables to Firestore when changed
 // Sync tables to Firestore when changed
 useEffect(() => {
-
   if (!db) return;
   if (!user) return;
+  if (!firestoreLoaded) return;
 
   try {
 
@@ -465,7 +471,7 @@ useEffect(() => {
 
   }
 
-}, [tables, user]);
+}, [tables, user, firestoreLoaded]);
   // Tính tổng tiền tự động hiển thị ở chân giỏ hàng bên phải
   const totalCartPrice = currentCart.reduce((sum, order) => sum + order.price, 0);
 
