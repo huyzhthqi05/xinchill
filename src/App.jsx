@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
-import { doc, onSnapshot, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  doc,
+  onSnapshot,
+  setDoc,
+  deleteDoc,
+  serverTimestamp
+} from 'firebase/firestore';
 import { auth } from './firebase';
 
 import {
@@ -154,47 +160,14 @@ const [tables, setTables] = useState(() => {
   const [realRevenue, setRealRevenue] = useState(0);
   const [realOrderCount, setRealOrderCount] = useState(0);
 
-  const ORDER_HISTORY_KEY = 'pos_order_history';
-
-const loadOrderHistory = () => {
-  try {
-    const raw = localStorage.getItem(ORDER_HISTORY_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    return {};
-  }
-};
-
-const saveOrderHistory = (data) => {
-  localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(data));
-};
-
-const [orderHistory, setOrderHistory] = useState(() => loadOrderHistory());
-const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
+  const [orderHistory, setOrderHistory] = useState({});
+  const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
 
   // Lưu lịch sử doanh thu theo ngày vào localStorage
-  const STORAGE_KEY = 'pos_daily_stats';
-  const getTodayKey = () => {return new Date().toLocaleDateString('en-CA');}; // Định dạng YYYY-MM-DD để dễ sắp xếp và truy xuất
+  const getTodayKey = () => {
+    return new Date().toLocaleDateString('en-CA');};
 
-  const loadAllStats = () => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch (e) {
-      return {};
-    }
-  };
-
-  const loadTodayStats = () => {
-    const all = loadAllStats();
-    return all[getTodayKey()] || { revenue: 0, orders: 0 };
-  };
-
-  const saveAllStats = (all) => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
-  };
-
-  const [allStats, setAllStats] = useState(() => loadAllStats());
+  const [allStats, setAllStats] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentDay, setCurrentDay] = useState(getTodayKey());
 
@@ -352,6 +325,30 @@ setTimeout(() => {
     { merge: true }
   );
 };
+
+
+const deleteHistoryFromFirestore = async () => {
+  if (!user) return;
+
+  try {
+    const historyRef = doc(
+      db,
+      'users',
+      user.uid,
+      'pos',
+      'orderHistory'
+    );
+
+    await deleteDoc(historyRef);
+
+    setOrderHistory({});
+
+    alert('Đã xóa lịch sử đơn hàng!');
+  } catch (e) {
+    console.error(e);
+    alert('Xóa thất bại!');
+  }
+};
   const handleSaveTemporary = () => {
     if (currentCart.length === 0) {
       alert("Giỏ hàng đang trống, không có gì để lưu tạm!");
@@ -398,7 +395,7 @@ saveTablesToFirestore(updatedTables);
     // Lưu lịch sử đơn hàng
 try {
   const todayKey = getTodayKey();
-  const history = loadOrderHistory();
+  const history = { ...orderHistory };
 
   if (!history[todayKey]) {
     history[todayKey] = [];
@@ -411,7 +408,6 @@ try {
     createdAt: new Date().toLocaleTimeString(),
   });
 
-  saveOrderHistory(history);
   setOrderHistory(history);
   if (user) {
   const historyRef = doc(db, 'users', user.uid, 'pos', 'orderHistory');
@@ -431,12 +427,11 @@ try {
 
     // Cập nhật lưu trữ theo ngày
     try {
-      const all = loadAllStats();
+      const all = { ...allStats };
       const todayKey = getTodayKey();
       const existing = all[todayKey] || { revenue: 0, orders: 0 };
       const updated = { revenue: (existing.revenue || 0) + totalCartPrice, orders: (existing.orders || 0) + 1 };
       all[todayKey] = updated;
-      saveAllStats(all);
       setAllStats(all);
       // cập nhật summary ngay lập tức
       setRealRevenue(updated.revenue);
@@ -612,6 +607,7 @@ if (!user) {
 }} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'history' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📜 Lịch sử đơn
             </button>
+            
             <button onClick={() => {
   setActiveTab('revenue');
   setIsMenuOpen(false);
@@ -651,6 +647,12 @@ if (!user) {
           {/* TAB LỊCH SỬ ĐƠN HÀNG */}
 {activeTab === 'history' && (
   <div className="bg-white rounded-3xl p-5 shadow-sm">
+    <button
+  onClick={deleteHistoryFromFirestore}
+  className="bg-red-500 text-white px-4 py-2 rounded-xl mb-4"
+>
+  🗑 Xóa toàn bộ lịch sử
+</button>
     <h2 className="text-2xl font-bold mb-4">
       Lịch sử đơn hàng
     </h2>
@@ -780,7 +782,6 @@ if (!user) {
                       </div>
                       <div className="mt-4">
                         <button onClick={() => { navigator.clipboard.writeText(JSON.stringify(allStats[selectedDate])); alert('Đã copy dữ liệu sang clipboard'); }} className="bg-slate-200 px-4 py-2 rounded-lg mr-2">Sao chép JSON</button>
-                        <button onClick={() => { if (confirm('Bạn có chắc muốn xóa ngày này?')) { const a = loadAllStats(); delete a[selectedDate]; saveAllStats(a); setAllStats(a); setSelectedDate(null); } }} className="bg-red-500 text-white px-4 py-2 rounded-lg">Xóa ngày</button>
                       </div>
                     </div>
                   )}
