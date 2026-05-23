@@ -66,6 +66,8 @@ const [tables, setTables] = useState(() => {
 
   // Quản lý xem nhân viên đang chọn xem và thao tác cho bàn số mấy
   const [selectedTableId, setSelectedTableId] = useState(1);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null);
 
   // Quản lý giỏ hàng TẠM THỜI đang bấm trên màn hình (trước khi ấn Lưu tạm)
   const [currentCart, setCurrentCart] = useState([]);
@@ -996,7 +998,15 @@ if (!user) {
                 💾 Lưu tạm
               </button>
               <button 
-                onClick={handleCheckout}
+                onClick={() => {
+  if (currentCart.length === 0) {
+    alert("Bàn này không có món nào để thanh toán!");
+    return;
+  }
+
+  setShowPaymentModal(true);
+  setPaymentMethod(null);
+}}
                 className="bg-green-600 text-white rounded-2xl py-4 font-semibold hover:bg-green-700 transition"
               >
                 💵 Thanh toán
@@ -1013,7 +1023,84 @@ if (!user) {
 
           </div>
         )}
+{showPaymentModal && (
+  <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-3xl p-6 w-full max-w-md shadow-xl">
+      <h2 className="text-2xl font-bold mb-4">Chọn phương thức thanh toán</h2>
 
+      {!paymentMethod && (
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setPaymentMethod('cash')}
+            className="bg-green-600 text-white rounded-2xl py-4 font-bold"
+          >
+            💵 Tiền mặt
+          </button>
+
+          <button
+            onClick={() => setPaymentMethod('bank')}
+            className="bg-blue-600 text-white rounded-2xl py-4 font-bold"
+          >
+            🏦 Chuyển khoản
+          </button>
+        </div>
+      )}
+
+      {paymentMethod === 'cash' && (
+        <div className="text-center">
+          <p className="text-green-700 font-bold text-xl mb-4">
+            Đã nhận tiền mặt
+          </p>
+
+          <button
+            onClick={() => {
+              setShowPaymentModal(false);
+              handleCheckout();
+            }}
+            className="w-full bg-green-600 text-white rounded-2xl py-4 font-bold"
+          >
+            ✅ Hoàn thành thanh toán
+          </button>
+        </div>
+      )}
+
+      {paymentMethod === 'bank' && (
+        <div className="text-center">
+          <p className="font-semibold mb-3">
+            Quét mã QR để chuyển khoản
+          </p>
+
+          <img
+  src="/qr.png.jpg"
+  alt="QR chuyển khoản"
+  className="w-64 h-64 object-contain mx-auto border rounded-2xl mb-4"
+/>
+
+          <p className="text-green-700 font-bold text-xl mb-4">
+            Tổng tiền: {totalCartPrice.toLocaleString()}đ
+          </p>
+
+          <button
+            onClick={() => {
+              setShowPaymentModal(false);
+              handleCheckout();
+            }}
+            className="w-full bg-green-600 text-white rounded-2xl py-4 font-bold"
+          >
+            ✅ Đã chuyển khoản - Hoàn thành
+          </button>
+        </div>
+      )}
+
+      <button
+        onClick={() => setShowPaymentModal(false)}
+        className="w-full mt-4 bg-slate-200 rounded-2xl py-3 font-semibold"
+      >
+        Hủy
+      </button>
+    </div>
+  </div>
+)}
         {/* NÚT GIỎ HÀNG NỔI */}
         {showCartBubble && (
           <button
