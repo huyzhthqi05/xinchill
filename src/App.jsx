@@ -329,7 +329,7 @@ const [tables, setTables] = useState(() => {
 
   return (
     <div className="min-h-screen bg-slate-100 p-4">
-      <div className="grid grid-cols-12 gap-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4">
 
         {/* Sidebar Bên Trái - Có thể bấm nút để đổi qua lại thao tác */}
         <div className="col-span-2 bg-green-900 text-white rounded-3xl p-6 shadow-xl">
@@ -356,7 +356,7 @@ const [tables, setTables] = useState(() => {
         </div>
 
         {/* Khu vực nội dung chính ở giữa */}
-        <div className={`${activeTab === 'revenue' ? 'col-span-10' : 'col-span-7'} space-y-4`}>
+        <div className={`${activeTab === 'revenue' ? 'w-full lg:col-span-10' : 'w-full lg:col-span-7'} space-y-4`}>
           {/* Bảng hiển thị Doanh thu tổng */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white rounded-3xl p-5 shadow-sm">
@@ -393,7 +393,7 @@ const [tables, setTables] = useState(() => {
                     ))}
                   </div>
                 </div>
-                <div className="col-span-2">
+                <div className="w-full lg:col-span-2">
                   {!selectedDate ? (
                     <div className="p-6 text-slate-600">Chọn ngày bên trái để xem chi tiết doanh thu.</div>
                   ) : (
@@ -447,13 +447,13 @@ const [tables, setTables] = useState(() => {
                 groupedMenuByCategory.map(group => (
                   <div key={group.category} className="mb-8">
                     <h3 className="text-xl font-semibold mb-4">{group.category}</h3>
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {group.items.length === 0 ? (
                         <p className="text-slate-500">Không có món phù hợp.</p>
                       ) : (
                         group.items.map((drink, index) => (
                           <div key={drink.id} className="bg-slate-50 rounded-3xl overflow-hidden border hover:shadow-lg transition">
-                            <img src={drink.image} className="h-48 w-full object-cover" alt={drink.name} />
+                            <img src={drink.image} className="h-32 sm:h48 w-full object-cover" alt={drink.name} />
                             <div className="p-4">
                               <h3 className="font-bold text-xl">{drink.name}</h3>
                               <div className="flex justify-between items-center mt-3">
@@ -479,7 +479,7 @@ const [tables, setTables] = useState(() => {
                   ) : (
                     filteredMenu.map((drink, index) => (
                       <div key={drink.id} className="bg-slate-50 rounded-3xl overflow-hidden border hover:shadow-lg transition">
-                        <img src={drink.image} className="h-48 w-full object-cover" alt={drink.name} />
+                        <img src={drink.image} className="h-32 sm:h48 w-full object-cover" alt={drink.name} />
                         <div className="p-4">
                           <h3 className="font-bold text-xl">{drink.name}</h3>
                           <div className="flex justify-between items-center mt-3">
@@ -504,7 +504,7 @@ const [tables, setTables] = useState(() => {
           {(activeTab === 'tables' || activeTab === 'order') && (
             <div className="bg-white rounded-3xl p-5 shadow-sm">
               <h2 className="text-2xl font-bold mb-5">Sơ đồ bàn quản lý</h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {tables.map((table) => (
                   <div 
                     key={table.id} 
@@ -528,7 +528,7 @@ const [tables, setTables] = useState(() => {
 
         {/* Giỏ Đơn Hàng bên phải (ẩn khi xem tab Doanh thu) */}
         {activeTab !== 'revenue' && (
-          <div className="col-span-3 bg-white rounded-3xl p-5 shadow-sm h-fit sticky top-4">
+          <div className="w-full lg:col-span-3 bg-white rounded-3xl p-4 lg:p-5 shadow-sm h-fit lg:sticky lg:top-4">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Đơn hàng</h2>
             <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full font-semibold">
