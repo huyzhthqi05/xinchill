@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
-import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth } from './firebase';
 
 import {
@@ -16,6 +16,10 @@ const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 
 const [loading, setLoading] = useState(true);
+const getUserDocRef = (name) => {
+  if (!user) return null;
+  return doc(db, 'users', user.uid, 'pos', name);
+};
   // Quản lý Tab hiển thị ở mục bên trái (Mặc định hiện Tab 'order' - Menu món ăn)
   const [activeTab, setActiveTab] = useState('order');
   useEffect(() => {
@@ -199,46 +203,55 @@ const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
   const [currentDay, setCurrentDay] = useState(getTodayKey());
 
   useEffect(() => {
-    // load today's stats into summary cards on mount
-    const today = loadTodayStats();
-    setRealRevenue(today.revenue || 0);
-    setRealOrderCount(today.orders || 0);
-    setAllStats(loadAllStats());
+  if (!user) return;
 
-    // Firestore realtime listeners (if configured)
-    if (db) {
-      try {
-        const appStateRef = doc(db, 'pos', 'appState');
-        const statsRef = doc(db, 'pos', 'allStats');
+  try {
+    const appStateRef = doc(db, 'users', user.uid, 'pos', 'appState');
+    const statsRef = doc(db, 'users', user.uid, 'pos', 'allStats');
+    const historyRef = doc(db, 'users', user.uid, 'pos', 'orderHistory');
 
-        const unsubApp = onSnapshot(appStateRef, (snap) => {
-          if (snap.exists()) {
-            const data = snap.data();
-            if (data.tables) setTables(data.tables);
-          }
-        });
-
-        const unsubStats = onSnapshot(statsRef, (snap) => {
-          if (snap.exists()) {
-            const data = snap.data();
-            const stats = data.stats || {};
-            setAllStats(stats);
-            const todayKey = getTodayKey();
-            const t = stats[todayKey] || { revenue: 0, orders: 0 };
-            setRealRevenue(t.revenue || 0);
-            setRealOrderCount(t.orders || 0);
-          }
-        });
-
-        return () => {
-          unsubApp();
-          unsubStats();
-        };
-      } catch (e) {
-        console.warn('Firestore listeners failed', e);
+    const unsubApp = onSnapshot(appStateRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data.tables) setTables(data.tables);
       }
-    }
-  }, []);
+    });
+
+    const unsubStats = onSnapshot(statsRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        const stats = data.stats || {};
+
+        setAllStats(stats);
+
+        const todayKey = getTodayKey();
+        const todayStats = stats[todayKey] || {
+          revenue: 0,
+          orders: 0
+        };
+
+        setRealRevenue(todayStats.revenue || 0);
+        setRealOrderCount(todayStats.orders || 0);
+      }
+    });
+
+    const unsubHistory = onSnapshot(historyRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setOrderHistory(data.history || {});
+      }
+    });
+
+    return () => {
+      unsubApp();
+      unsubStats();
+      unsubHistory();
+    };
+
+  } catch (e) {
+    console.warn('Firestore listeners failed', e);
+  }
+}, [user]);
 
   // HÀM CLICK CHỌN BÀN: Hiển thị lại những món đã lưu trước đó của bàn này lên giỏ hàng
   const handleSelectTable = (tableId) => {
@@ -366,6 +379,14 @@ try {
 
   saveOrderHistory(history);
   setOrderHistory(history);
+  if (user) {
+  const historyRef = doc(db, 'users', user.uid, 'pos', 'orderHistory');
+
+  setDoc(historyRef, {
+    history,
+    lastUpdated: serverTimestamp()
+  }, { merge: true });
+}
 } catch (e) {
   console.log(e);
 }
@@ -387,9 +408,9 @@ try {
       setRealRevenue(updated.revenue);
       setRealOrderCount(updated.orders);
       // write stats to Firestore (merge)
-      if (db) {
+      if (db && user) {
         try {
-          const statsRef = doc(db, 'pos', 'allStats');
+          const statsRef = doc(db, 'users', user.uid, 'pos', 'allStats');
           setDoc(statsRef, { stats: all, lastUpdated: serverTimestamp() }, { merge: true }).catch(() => {});
         } catch (e) { console.warn('Failed to write stats to Firestore', e); }
       }
@@ -409,17 +430,42 @@ try {
   };
 
     // Sync tables to Firestore when changed
-    useEffect(() => {
-      if (!db) return;
-      try {
-        const ref = doc(db, 'pos', 'appState');
-        setDoc(ref, { tables, lastUpdated: serverTimestamp() }, { merge: true }).catch(() => {});
-      } catch (e) { console.warn('Failed to write appState to Firestore', e); }
-    }, [tables]);
-  useEffect(() => {
-  localStorage.setItem('tables', JSON.stringify(tables));
-}, [tables]);
+    // Sync tables to Firestore when changed
+// Sync tables to Firestore when changed
+useEffect(() => {
 
+  if (!db) return;
+  if (!user) return;
+
+  try {
+
+    const ref = doc(
+      db,
+      'users',
+      user.uid,
+      'pos',
+      'appState'
+    );
+
+    setDoc(
+      ref,
+      {
+        tables,
+        lastUpdated: serverTimestamp()
+      },
+      { merge: true }
+    ).catch(() => {});
+
+  } catch (e) {
+
+    console.warn(
+      'Failed to write appState to Firestore',
+      e
+    );
+
+  }
+
+}, [tables, user]);
   // Tính tổng tiền tự động hiển thị ở chân giỏ hàng bên phải
   const totalCartPrice = currentCart.reduce((sum, order) => sum + order.price, 0);
 
