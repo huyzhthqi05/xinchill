@@ -34,12 +34,6 @@ const getUserDocRef = (name) => {
 
   // Quản lý trạng thái thực tế của 6 bàn (Mỗi bàn có một mảng currentOrders riêng biệt)
 const [tables, setTables] = useState(() => {
-  const savedTables = localStorage.getItem('tables');
-
-  if (savedTables) {
-    return JSON.parse(savedTables);
-  }
-
   return [
     { id: 1, status: 'empty', total: 0, currentOrders: [] },
     { id: 2, status: 'empty', total: 0, currentOrders: [] },
@@ -590,7 +584,7 @@ if (!user) {
           <div className="space-y-4">
             <button 
               onClick={() => {
-  setActiveTab('orders');
+  setActiveTab('order');
   setIsMenuOpen(false);
 }}
               className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'order' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}
