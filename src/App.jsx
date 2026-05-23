@@ -337,24 +337,57 @@ setTimeout(() => {
   };
 
   // TÍNH NĂNG 1: LƯU TẠM VÀO BÀN ĐÃ CHỌN
+  const saveTablesToFirestore = async (updatedTables) => {
+  if (!user) return;
+
+  const ref = doc(
+    db,
+    'users',
+    user.uid,
+    'pos',
+    'appState'
+  );
+
+  await setDoc(
+    ref,
+    {
+      tables: updatedTables,
+      lastUpdated: serverTimestamp()
+    },
+    { merge: true }
+  );
+};
   const handleSaveTemporary = () => {
     if (currentCart.length === 0) {
       alert("Giỏ hàng đang trống, không có gì để lưu tạm!");
       return;
     }
 
-    setTables(tables.map(table => {
-      if (table.id === selectedTableId) {
-        const totalMoney = currentCart.reduce((sum, item) => sum + item.price, 0);
-        return {
-          ...table,
-          status: 'busy', // Đổi màu trạng thái sang Đang dùng (Màu cam)
-          currentOrders: currentCart, // Cất giỏ hàng vào bộ nhớ riêng của bàn này
-          total: totalMoney
-        };
-      }
-      return table;
-    }));
+    const updatedTables = tables.map(table => {
+
+  if (table.id === selectedTableId) {
+
+    const totalMoney = currentCart.reduce(
+      (sum, item) => sum + item.price,
+      0
+    );
+
+    return {
+      ...table,
+      status: 'busy',
+      currentOrders: currentCart,
+      total: totalMoney
+    };
+
+  }
+
+  return table;
+
+});
+
+setTables(updatedTables);
+
+saveTablesToFirestore(updatedTables);
 
     alert(`💾 Đã lưu tạm đơn hàng thành công cho Bàn 0${selectedTableId}!`);
   };
@@ -425,11 +458,14 @@ try {
     alert(`💵 Thanh toán thành công Bàn 0${selectedTableId}: ${totalCartPrice.toLocaleString()}đ!`);
     
     // Khởi tạo lại bàn này về trạng thái Trống (Màu xanh), xóa sạch món đã lưu của bàn này
-    setTables(tables.map(table => 
-      table.id === selectedTableId 
-        ? { ...table, status: 'empty', total: 0, currentOrders: [] }
-        : table
-    ));
+    const updatedTables = tables.map(table =>
+  table.id === selectedTableId
+    ? { ...table, status: 'empty', total: 0, currentOrders: [] }
+    : table
+);
+
+setTables(updatedTables);
+saveTablesToFirestore(updatedTables);
 
     // Xóa sạch giỏ hàng hiển thị bên phải
     setCurrentCart([]);
@@ -438,40 +474,7 @@ try {
     // Sync tables to Firestore when changed
     // Sync tables to Firestore when changed
 // Sync tables to Firestore when changed
-useEffect(() => {
-  if (!db) return;
-  if (!user) return;
-  if (!firestoreLoaded) return;
 
-  try {
-
-    const ref = doc(
-      db,
-      'users',
-      user.uid,
-      'pos',
-      'appState'
-    );
-
-    setDoc(
-      ref,
-      {
-        tables,
-        lastUpdated: serverTimestamp()
-      },
-      { merge: true }
-    ).catch(() => {});
-
-  } catch (e) {
-
-    console.warn(
-      'Failed to write appState to Firestore',
-      e
-    );
-
-  }
-
-}, [tables, user, firestoreLoaded]);
   // Tính tổng tiền tự động hiển thị ở chân giỏ hàng bên phải
   const totalCartPrice = currentCart.reduce((sum, order) => sum + order.price, 0);
 
