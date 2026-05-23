@@ -131,9 +131,27 @@ const [tables, setTables] = useState(() => {
   const [realRevenue, setRealRevenue] = useState(0);
   const [realOrderCount, setRealOrderCount] = useState(0);
 
+  const ORDER_HISTORY_KEY = 'pos_order_history';
+
+const loadOrderHistory = () => {
+  try {
+    const raw = localStorage.getItem(ORDER_HISTORY_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+};
+
+const saveOrderHistory = (data) => {
+  localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(data));
+};
+
+const [orderHistory, setOrderHistory] = useState(() => loadOrderHistory());
+const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
+
   // Lưu lịch sử doanh thu theo ngày vào localStorage
   const STORAGE_KEY = 'pos_daily_stats';
-  const getTodayKey = () => new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const getTodayKey = () => {return new Date().toLocaleDateString('en-CA');}; // Định dạng YYYY-MM-DD để dễ sắp xếp và truy xuất
 
   const loadAllStats = () => {
     try {
@@ -265,6 +283,27 @@ const [tables, setTables] = useState(() => {
     }
 
     const totalCartPrice = currentCart.reduce((sum, item) => sum + item.price, 0);
+    // Lưu lịch sử đơn hàng
+try {
+  const todayKey = getTodayKey();
+  const history = loadOrderHistory();
+
+  if (!history[todayKey]) {
+    history[todayKey] = [];
+  }
+
+  history[todayKey].push({
+    tableId: selectedTableId,
+    total: totalCartPrice,
+    items: currentCart,
+    createdAt: new Date().toLocaleTimeString(),
+  });
+
+  saveOrderHistory(history);
+  setOrderHistory(history);
+} catch (e) {
+  console.log(e);
+}
     
     // Cộng dồn tiền vào doanh thu tổng ngày và tăng số lượng đơn thành công
     setRealRevenue(prevRevenue => prevRevenue + totalCartPrice);
@@ -350,6 +389,9 @@ const [tables, setTables] = useState(() => {
             <button onClick={() => setActiveTab('orders')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'orders' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📦 Đơn hàng
             </button>
+            <button onClick={() => setActiveTab('history')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'history' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
+              📜 Lịch sử đơn
+            </button>
             <button onClick={() => setActiveTab('revenue')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'revenue' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📊 Doanh thu
             </button>
@@ -376,6 +418,104 @@ const [tables, setTables] = useState(() => {
           </div>
 
           {/* TAB Doanh thu: lịch sử theo ngày */}
+          {/* TAB LỊCH SỬ ĐƠN HÀNG */}
+{activeTab === 'history' && (
+  <div className="bg-white rounded-3xl p-5 shadow-sm">
+    <h2 className="text-2xl font-bold mb-4">
+      Lịch sử đơn hàng
+    </h2>
+
+    <div className="grid grid-cols-3 gap-4">
+      
+      {/* DANH SÁCH NGÀY */}
+      <div className="col-span-1">
+        <div className="space-y-2 max-h-[500px] overflow-y-auto">
+          {Object.keys(orderHistory).length === 0 && (
+            <p className="text-slate-500">
+              Chưa có lịch sử đơn hàng
+            </p>
+          )}
+
+          {Object.keys(orderHistory)
+            .sort((a, b) => b.localeCompare(a))
+            .map(dateKey => (
+              <button
+                key={dateKey}
+                onClick={() => setSelectedHistoryDate(dateKey)}
+                className={`w-full text-left p-3 rounded-2xl border transition ${
+                  selectedHistoryDate === dateKey
+                    ? 'bg-green-50 border-green-300'
+                    : 'bg-slate-50'
+                }`}
+              >
+                <div className="font-semibold">
+                  {new Date(dateKey).toLocaleDateString()}
+                </div>
+
+                <div className="text-sm text-slate-500">
+                  {orderHistory[dateKey].length} đơn
+                </div>
+              </button>
+            ))}
+        </div>
+      </div>
+
+      {/* CHI TIẾT ĐƠN */}
+      <div className="col-span-2">
+        {!selectedHistoryDate ? (
+          <div className="p-5 text-slate-500">
+            Chọn ngày để xem lịch sử đơn
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {orderHistory[selectedHistoryDate]
+              .slice()
+              .reverse()
+              .map((order, index) => (
+                <div
+                  key={index}
+                  className="border rounded-2xl p-4"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-bold text-lg">
+                        Bàn {order.tableId}
+                      </h3>
+
+                      <p className="text-sm text-slate-500">
+                        {order.createdAt}
+                      </p>
+                    </div>
+
+                    <div className="text-green-700 font-bold text-xl">
+                      {order.total.toLocaleString()}đ
+                    </div>
+                  </div>
+
+                  <div className="mt-4 space-y-2">
+                    {order.items.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between text-sm"
+                      >
+                        <span>
+                          {item.item} x{item.qty}
+                        </span>
+
+                        <span>
+                          {item.price.toLocaleString()}đ
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+)}
           {activeTab === 'revenue' && (
             <div className="bg-white rounded-3xl p-5 shadow-sm">
               <h2 className="text-2xl font-bold mb-4">Lịch sử doanh thu theo ngày</h2>
@@ -529,7 +669,7 @@ const [tables, setTables] = useState(() => {
         </div>
 
         {/* Giỏ Đơn Hàng bên phải (ẩn khi xem tab Doanh thu) */}
-        {activeTab !== 'revenue' && (
+        {activeTab !== 'revenue' && activeTab !== 'history' && (
           <div className="w-full lg:col-span-3 bg-white rounded-3xl p-4 lg:p-5 shadow-sm h-fit lg:sticky lg:top-4">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Đơn hàng</h2>
