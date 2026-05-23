@@ -347,7 +347,9 @@ const [tables, setTables] = useState(() => {
             >
               🪑 Sơ đồ bàn
             </button>
-            <button className="w-full hover:bg-green-800 rounded-2xl p-4 text-left opacity-60">📦 Đơn hàng</button>
+            <button onClick={() => setActiveTab('orders')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'orders' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
+              📦 Đơn hàng
+            </button>
             <button onClick={() => setActiveTab('revenue')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'revenue' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📊 Doanh thu
             </button>
