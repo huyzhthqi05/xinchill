@@ -168,6 +168,7 @@ const [tables, setTables] = useState(() => {
 
   const [orderHistory, setOrderHistory] = useState({});
   const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
+  const [editingTableId, setEditingTableId] = useState(null);
 
   // Lưu lịch sử doanh thu theo ngày vào localStorage
   const getTodayKey = () => {
@@ -244,6 +245,7 @@ useEffect(() => {
   // HÀM CLICK CHỌN BÀN: Hiển thị lại những món đã lưu trước đó của bàn này lên giỏ hàng
   const handleSelectTable = (tableId) => {
     setSelectedTableId(tableId);
+    setEditingTableId(null);
     const targetTable = tables.find(t => t.id === tableId);
     if (targetTable) {
       setCurrentCart(targetTable.currentOrders);
@@ -273,6 +275,12 @@ useEffect(() => {
 
   // Hàm Thêm món từ Menu vào Giỏ hàng tạm thời
   const handleAddToOrder = (drink) => {
+    const selectedTable = tables.find(t => t.id === selectedTableId);
+
+if (selectedTable?.status === 'busy' && editingTableId !== selectedTableId) {
+  alert(`Bàn ${selectedTableId} đã được order. Muốn thay đổi hãy bấm Chỉnh sửa!`);
+  return;
+}
   const existingItem = currentCart.find(order => order.id === drink.id);
 
   if (existingItem) {
@@ -362,7 +370,7 @@ const deleteHistoryFromFirestore = async () => {
 };
   const handleSaveTemporary = () => {
     if (currentCart.length === 0) {
-      alert("Giỏ hàng đang trống, không có gì để lưu tạm!");
+      alert("Giỏ hàng đang trống, không có gì để xác nhận!");
       return;
     }
 
@@ -391,8 +399,12 @@ const deleteHistoryFromFirestore = async () => {
 setTables(updatedTables);
 
 saveTablesToFirestore(updatedTables);
+setEditingTableId(null);
+setShowCartBubble(false);
+setCurrentCart([]);
+setActiveTab('tables');
 
-    alert(`💾 Đã lưu tạm đơn hàng thành công cho Bàn 0${selectedTableId}!`);
+    alert(`✅ Xác nhận đơn hàng thành công cho Bàn 0${selectedTableId}!`);
   };
 
   // TÍNH NĂNG 2: THANH TOÁN HOÁ ĐƠN VÀ RESET BÀN VỀ TRỐNG
@@ -967,6 +979,10 @@ if (!user) {
                   <h3 className="font-semibold text-sm">{order.item}</h3>
                   <p className="text-slate-500 text-xs">SL: {order.qty}</p>
                   <input
+                  disabled={
+  tables.find(t => t.id === selectedTableId)?.status === 'busy' &&
+  editingTableId !== selectedTableId
+                  }
                     className="mt-2 w-full border rounded-lg px-2 py-1 text-xs"
                     placeholder="Ghi chú: ít đá, ít đường..."
                     value={order.note || ''}
@@ -1010,13 +1026,20 @@ if (!user) {
               <span>Tổng tiền</span>
               <span className="text-green-700">{totalCartPrice.toLocaleString()}đ</span>
             </div>
-
+{tables.find(t => t.id === selectedTableId)?.status === 'busy' && editingTableId !== selectedTableId && (
+  <button
+    onClick={() => setEditingTableId(selectedTableId)}
+    className="w-full bg-orange-500 text-white rounded-2xl py-4 font-semibold mb-3"
+  >
+    ✏️ Chỉnh sửa đơn bàn {selectedTableId}
+  </button>
+)}
             <div className="grid grid-cols-2 gap-3 mt-5">
               <button 
                 onClick={handleSaveTemporary}
                 className="bg-slate-200 rounded-2xl py-4 font-semibold hover:bg-slate-300 transition"
               >
-                💾 Lưu tạm
+                ✅ Xác nhận
               </button>
               <button 
                 onClick={() => {
