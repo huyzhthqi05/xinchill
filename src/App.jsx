@@ -43,6 +43,8 @@ const [tables, setTables] = useState(() => {
 
   // Quản lý giỏ hàng TẠM THỜI đang bấm trên màn hình (trước khi ấn Lưu tạm)
   const [currentCart, setCurrentCart] = useState([]);
+  const [showCartBubble, setShowCartBubble] = useState(false);
+  const [lastAddedItem, setLastAddedItem] = useState('');
 
   // Menu món ăn cố định của quán
   const categories = ['Tất cả', 'Nước ép', 'Sinh tố', 'Sữa chua', 'Trà', 'Ăn vặt'];
@@ -228,17 +230,38 @@ const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
 
   // Hàm Thêm món từ Menu vào Giỏ hàng tạm thời
   const handleAddToOrder = (drink) => {
-    const existingItem = currentCart.find(order => order.id === drink.id);
-    if (existingItem) {
-      setCurrentCart(currentCart.map(order =>
-        order.id === drink.id
-          ? { ...order, qty: order.qty + 1, price: (order.qty + 1) * drink.price }
-          : order
-      ));
-    } else {
-      setCurrentCart([...currentCart, { id: drink.id, item: drink.name, qty: 1, price: drink.price, originPrice: drink.price }]);
-    }
-  };
+  const existingItem = currentCart.find(order => order.id === drink.id);
+
+  if (existingItem) {
+    setCurrentCart(currentCart.map(order =>
+      order.id === drink.id
+        ? {
+            ...order,
+            qty: order.qty + 1,
+            price: (order.qty + 1) * drink.price
+          }
+        : order
+    ));
+  } else {
+    setCurrentCart([
+      ...currentCart,
+      {
+        id: drink.id,
+        item: drink.name,
+        qty: 1,
+        price: drink.price,
+        originPrice: drink.price,
+        note: ''
+      }
+    ]);
+  }
+  setLastAddedItem(drink.name);
+setShowCartBubble(true);
+
+setTimeout(() => {
+  setShowCartBubble(false);
+}, 2000);
+};
 
   // Hàm Tăng/Giảm số lượng món trong giỏ hàng tạm thời
   const handleUpdateQty = (id, change) => {
@@ -670,7 +693,10 @@ try {
 
         {/* Giỏ Đơn Hàng bên phải (ẩn khi xem tab Doanh thu) */}
         {activeTab !== 'revenue' && activeTab !== 'history' && (
-          <div className="w-full lg:col-span-3 bg-white rounded-3xl p-4 lg:p-5 shadow-sm h-fit lg:sticky lg:top-4">
+          <div
+  id="cart-section"
+  className="w-full lg:col-span-3 bg-white rounded-3xl p-4 lg:p-5 shadow-sm h-fit lg:sticky lg:top-4"
+>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Đơn hàng</h2>
             <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full font-semibold">
@@ -684,6 +710,20 @@ try {
                 <div>
                   <h3 className="font-semibold text-sm">{order.item}</h3>
                   <p className="text-slate-500 text-xs">SL: {order.qty}</p>
+                  <input
+                    className="mt-2 w-full border rounded-lg px-2 py-1 text-xs"
+                    placeholder="Ghi chú: ít đá, ít đường..."
+                    value={order.note || ''}
+                    onChange={(e) => {
+                      const newNote = e.target.value;
+
+                    setCurrentCart(currentCart.map(item =>
+                      item.id === order.id
+                        ? { ...item, note: newNote }
+                        : item
+                   ));
+                 }}
+               />
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-green-700 text-sm">{order.price.toLocaleString()}đ</p>
@@ -740,6 +780,43 @@ try {
 
           </div>
         )}
+
+        {/* NÚT GIỎ HÀNG NỔI */}
+        {showCartBubble && (
+          <button
+            onClick={() => {
+              setActiveTab('order');
+
+              setTimeout(() => {
+                document
+                  .getElementById('cart-section')
+                  ?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
+            className="
+              fixed
+              top-5
+              right-5
+              z-50
+              bg-green-600
+              text-white
+              rounded-full
+              shadow-xl
+              px-4
+              py-3
+              flex
+              items-center
+              gap-2
+              animate-bounce
+            "
+          >
+            🛒
+            <span className="font-semibold text-sm">
+              Đã thêm {lastAddedItem}
+            </span>
+          </button>
+        )}
+
       </div>
     </div>
   );
