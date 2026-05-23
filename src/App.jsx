@@ -1,10 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
 import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth } from './firebase';
+
+import {
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from 'firebase/auth';
 
 export default function QuanNuocPOS() {
+  const [user, setUser] = useState(null);
+
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+
+const [loading, setLoading] = useState(true);
   // Quản lý Tab hiển thị ở mục bên trái (Mặc định hiện Tab 'order' - Menu món ăn)
   const [activeTab, setActiveTab] = useState('order');
+  useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    setUser(currentUser);
+    setLoading(false);
+  });
+
+  return () => unsubscribe();
+}, []);
 
   // Quản lý trạng thái thực tế của 6 bàn (Mỗi bàn có một mảng currentOrders riêng biệt)
 const [tables, setTables] = useState(() => {
@@ -410,6 +431,66 @@ try {
     return status === 'busy' ? 'Đang dùng' : 'Trống';
   };
 
+  const handleLogin = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    alert("Sai email hoặc mật khẩu!");
+  }
+};
+
+const handleLogout = async () => {
+  await signOut(auth);
+};
+
+if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      Đang tải...
+    </div>
+  );
+}
+
+if (!user) {
+  return (
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl p-8 shadow-xl w-full max-w-md">
+
+        <h1 className="text-3xl font-bold text-center mb-6 text-green-700">
+          ☕ XinChill POS
+        </h1>
+
+        <div className="space-y-4">
+
+          <input
+            type="email"
+            placeholder="Email đăng nhập"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border rounded-2xl px-4 py-3"
+          />
+
+          <input
+            type="password"
+            placeholder="Mật khẩu"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border rounded-2xl px-4 py-3"
+          />
+
+          <button
+            onClick={handleLogin}
+            className="w-full bg-green-600 text-white rounded-2xl py-3 font-semibold"
+          >
+            Đăng nhập
+          </button>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
   return (
     <div className="min-h-screen bg-slate-100 p-4">
       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4">
@@ -417,6 +498,12 @@ try {
         {/* Sidebar Bên Trái - Có thể bấm nút để đổi qua lại thao tác */}
         <div className="col-span-2 bg-green-900 text-white rounded-3xl p-6 shadow-xl">
           <h1 className="text-3xl font-bold mb-10 text-center">☕ XinChill</h1>
+          <button
+  onClick={handleLogout}
+  className="w-full bg-red-500 rounded-2xl p-3 mb-4 font-semibold"
+>
+  Đăng xuất
+</button>
           <div className="space-y-4">
             <button 
               onClick={() => setActiveTab('order')}
