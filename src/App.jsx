@@ -233,6 +233,14 @@ const [tables, setTables] = useState(() => {
   }
 }, [user]);
 
+useEffect(() => {
+  const table = tables.find(t => t.id === selectedTableId);
+
+  if (table) {
+    setCurrentCart(table.currentOrders || []);
+  }
+}, [selectedTableId, tables]);
+
   // HÀM CLICK CHỌN BÀN: Hiển thị lại những món đã lưu trước đó của bàn này lên giỏ hàng
   const handleSelectTable = (tableId) => {
     setSelectedTableId(tableId);
@@ -293,9 +301,6 @@ const [tables, setTables] = useState(() => {
   setLastAddedItem(drink.name);
 setShowCartBubble(true);
 
-setTimeout(() => {
-  setShowCartBubble(false);
-}, 2000);
 };
 
   // Hàm Tăng/Giảm số lượng món trong giỏ hàng tạm thời
@@ -473,6 +478,7 @@ saveTablesToFirestore(updatedTables);
 
   // Tính tổng tiền tự động hiển thị ở chân giỏ hàng bên phải
   const totalCartPrice = currentCart.reduce((sum, order) => sum + order.price, 0);
+  const totalCartItems = currentCart.reduce((sum, order) => sum + order.qty, 0);
 
   const getStatusColor = (status) => {
     return status === 'busy' ? 'bg-orange-500' : 'bg-green-500';
@@ -934,9 +940,24 @@ if (!user) {
 >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Đơn hàng</h2>
-            <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full font-semibold">
-              Bàn {selectedTableId < 10 ? `0${selectedTableId}` : selectedTableId}
-            </span>
+            <select
+  value={selectedTableId}
+  onChange={(e) => setSelectedTableId(Number(e.target.value))}
+  className={`px-4 py-2 rounded-full font-bold outline-none cursor-pointer
+    ${
+      tables.find(t => t.id === selectedTableId)?.status === 'busy'
+        ? 'bg-orange-500 text-white'
+        : 'bg-green-100 text-green-700'
+    }
+  `}
+>
+  {tables.map((table) => (
+    <option key={table.id} value={table.id}>
+      Bàn {table.id < 10 ? `0${table.id}` : table.id}
+      {table.status === 'busy' ? ' 🔥' : ''}
+    </option>
+  ))}
+</select>
           </div>
 
           <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
@@ -1102,7 +1123,7 @@ if (!user) {
   </div>
 )}
         {/* NÚT GIỎ HÀNG NỔI */}
-        {showCartBubble && (
+        {currentCart.length > 0 && (
           <button
             onClick={() => {
               setActiveTab('order');
@@ -1132,8 +1153,8 @@ if (!user) {
           >
             🛒
             <span className="font-semibold text-sm">
-              Đã thêm {lastAddedItem}
-            </span>
+  {totalCartItems} món
+</span>
           </button>
         )}
 
