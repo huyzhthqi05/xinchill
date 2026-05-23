@@ -228,6 +228,27 @@ const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
     }
   };
 
+  const handleGoToCheckout = (tableId) => {
+  const targetTable = tables.find(t => t.id === tableId);
+
+  if (!targetTable || targetTable.currentOrders.length === 0) {
+    alert("Bàn này chưa có món để thanh toán!");
+    return;
+  }
+
+  setSelectedTableId(tableId);
+  setCurrentCart(targetTable.currentOrders);
+
+  setTimeout(() => {
+    document
+      .getElementById('cart-section')
+      ?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+  }, 100);
+};  
+
   // Hàm Thêm món từ Menu vào Giỏ hàng tạm thời
   const handleAddToOrder = (drink) => {
   const existingItem = currentCart.find(order => order.id === drink.id);
@@ -684,6 +705,27 @@ try {
                     <h4 className="font-bold text-green-700 mt-4 text-xl">
                       {table.total.toLocaleString()}đ
                     </h4>
+                    {table.status === 'busy' && (
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      handleGoToCheckout(table.id);
+    }}
+    className="
+      mt-3
+      w-full
+      bg-orange-500
+      text-white
+      rounded-xl
+      py-2
+      text-sm
+      font-semibold
+      hover:bg-orange-600
+    "
+  >
+    💵 Thanh toán
+  </button>
+)}
                   </div>
                 ))}
               </div>
