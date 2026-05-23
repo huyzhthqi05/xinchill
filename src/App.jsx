@@ -22,6 +22,7 @@ const getUserDocRef = (name) => {
 };
   // Quản lý Tab hiển thị ở mục bên trái (Mặc định hiện Tab 'order' - Menu món ăn)
   const [activeTab, setActiveTab] = useState('order');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
     setUser(currentUser);
@@ -548,11 +549,38 @@ if (!user) {
 
   return (
     <div className="min-h-screen bg-slate-100 p-4">
+
+  {/* Nút menu mobile */}
+  <button
+    onClick={() => setIsMenuOpen(true)}
+    className="lg:hidden fixed top-4 left-4 z-50 bg-green-900 text-white rounded-xl px-4 py-3 shadow-lg"
+  >
+    ☰
+  </button>
       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4">
 
         {/* Sidebar Bên Trái - Có thể bấm nút để đổi qua lại thao tác */}
-        <div className="col-span-2 bg-green-900 text-white rounded-3xl p-6 shadow-xl">
+        <div className={`
+  fixed lg:static
+  top-0 left-0
+  h-screen lg:h-auto
+  w-72 lg:w-auto
+  z-50
+  bg-green-900 text-white
+  rounded-r-3xl lg:rounded-3xl
+  p-6 shadow-xl
+  transform transition-transform duration-300
+  ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+  lg:translate-x-0
+  lg:col-span-2
+`}>
           <h1 className="text-3xl font-bold mb-10 text-center">☕ XinChill</h1>
+          <button
+  onClick={() => setIsMenuOpen(false)}
+  className="lg:hidden absolute top-4 right-4 text-2xl"
+>
+  ✕
+</button>
           <button
   onClick={handleLogout}
   className="w-full bg-red-500 rounded-2xl p-3 mb-4 font-semibold"
@@ -561,29 +589,51 @@ if (!user) {
 </button>
           <div className="space-y-4">
             <button 
-              onClick={() => setActiveTab('order')}
+              onClick={() => {
+  setActiveTab('orders');
+  setIsMenuOpen(false);
+}}
               className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'order' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}
             >
               🧾 Order
             </button>
             <button 
-              onClick={() => setActiveTab('tables')}
+              onClick={() => {
+  setActiveTab('tables');
+  setIsMenuOpen(false);
+}}
               className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'tables' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}
             >
               🪑 Sơ đồ bàn
             </button>
-            <button onClick={() => setActiveTab('orders')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'orders' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
+            <button onClick={() => {
+  setActiveTab('orders');
+  setIsMenuOpen(false);
+}} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'orders' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📦 Đơn hàng
             </button>
-            <button onClick={() => setActiveTab('history')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'history' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
+            <button onClick={() => {
+  setActiveTab('history');
+  setIsMenuOpen(false);
+}} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'history' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📜 Lịch sử đơn
             </button>
-            <button onClick={() => setActiveTab('revenue')} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'revenue' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
+            <button onClick={() => {
+  setActiveTab('revenue');
+  setIsMenuOpen(false);
+}} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'revenue' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📊 Doanh thu
             </button>
             <button className="w-full hover:bg-green-800 rounded-2xl p-4 text-left opacity-60">⚙️ Cài đặt</button>
           </div>
         </div>
+
+{isMenuOpen && (
+  <div
+    onClick={() => setIsMenuOpen(false)}
+    className="lg:hidden fixed inset-0 bg-black/40 z-40"
+  />
+)}
 
         {/* Khu vực nội dung chính ở giữa */}
         <div className={`${activeTab === 'revenue' ? 'w-full lg:col-span-10' : 'w-full lg:col-span-7'} space-y-4`}>
