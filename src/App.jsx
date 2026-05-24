@@ -80,68 +80,68 @@ const [tables, setTables] = useState(() => {
   const [selectedMenuCategory, setSelectedMenuCategory] = useState('Tất cả');
 
   const menu = [
-    { id: 'm1', name: 'Nước ép Cà Chua M', price: 15000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm2', name: 'Nước ép Cà Chua L', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm3', name: 'Nước ép Cà Rốt M', price: 15000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm4', name: 'Nước ép Cà Rốt L', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm5', name: 'Nước ép Ổi M', price: 15000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm6', name: 'Nước ép Ổi L', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm7', name: 'Nước ép Chanh dây M', price: 15000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm8', name: 'Nước ép Chanh dây L', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm9', name: 'Nước ép Dưa hấu M', price: 15000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm10', name: 'Nước ép Dưa hấu L', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm11', name: 'Nước ép Cam M', price: 15000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm12', name: 'Nước ép Cam L', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm13', name: 'Nước ép Dưa lưới M', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm14', name: 'Nước ép Dưa lưới L', price: 25000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm15', name: 'Nước ép Thơm M', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm16', name: 'Nước ép Thơm L', price: 25000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm17', name: 'Nước ép Táo M', price: 20000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm18', name: 'Nước ép Táo L', price: 25000, category: 'Nước ép', image: 'https://unsplash.com' },
-    { id: 'm22', name: 'Sinh tố Sapoche M', price: 23000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm23', name: 'Sinh tố Sapoche L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm24', name: 'Sinh tố Xoài M', price: 23000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm25', name: 'Sinh tố Xoài L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm26', name: 'Sinh tố Bơ M', price: 23000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm27', name: 'Sinh tố Bơ L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm28', name: 'Sinh tố Việt quất M', price: 23000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm29', name: 'Sinh tố Việt quất L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm30', name: 'Sinh tố Mãng cầu M', price: 23000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm31', name: 'Sinh tố Mãng cầu L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm32', name: 'Sinh tốDâu tây M', price: 23000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm33', name: 'Sinh tố Dâu tây L', price: 29000, category: 'Sinh tố', image: 'https://unsplash.com' },
-    { id: 'm34', name: 'Sữa chua Chanh đá M', price: 17000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm35', name: 'Sữa chua Chanh đá L', price: 22000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm36', name: 'Sữa chua Việt quất M', price: 22000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm37', name: 'Sữa chua Việt quất L', price: 27000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm38', name: 'Sữa chua Xoài M', price: 22000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm39', name: 'Sữa chua Xoài L', price: 27000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm40', name: 'Sữa chua Dâu M', price: 22000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm41', name: 'Sữa chua Dâu L', price: 27000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm42', name: 'Sữa chua Đào M', price: 22000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm43', name: 'Sữa chua Đào L', price: 27000, category: 'Sữa chua', image: 'https://unsplash.com' },
-    { id: 'm44', name: 'Trà chanh M', price: 15000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm45', name: 'Trà chanh L', price: 20000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm46', name: 'Trà tắc M', price: 15000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm47', name: 'Trà tắc L', price: 20000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm48', name: 'Trà đào M', price: 17000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm49', name: 'Trà đào L', price: 22000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm50', name: 'Trà dâu M', price: 17000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm51', name: 'Trà dâu L', price: 22000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm52', name: 'Trà mãng cầu M', price: 17000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm53', name: 'Trà mãng cầu L', price: 22000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm54', name: 'Trà mận M', price: 17000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm55', name: 'Trà mận L', price: 22000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm56', name: 'Trà Atiso M', price: 17000, category: 'Trà', image: 'https://unsplash.com' },
-    { id: 'm57', name: 'Trà Atiso L', price: 22000, category: 'Trà', image: 'https://unsplash.com' },
+    { id: 'm1', name: 'Nước ép Cà Chua M', price: 15000, category: 'Nước ép', image: '/ca-chua.jpg' },
+    { id: 'm2', name: 'Nước ép Cà Chua L', price: 20000, category: 'Nước ép', image: '/ca-chua.jpg' },
+    { id: 'm3', name: 'Nước ép Cà Rốt M', price: 15000, category: 'Nước ép', image: '/ca-rot.jpg' },
+    { id: 'm4', name: 'Nước ép Cà Rốt L', price: 20000, category: 'Nước ép', image: '/ca-rot.jpg' },
+    { id: 'm5', name: 'Nước ép Ổi M', price: 15000, category: 'Nước ép', image: '/oi.jpg' },
+    { id: 'm6', name: 'Nước ép Ổi L', price: 20000, category: 'Nước ép', image: '/oi.jpg' },
+    { id: 'm7', name: 'Nước ép Chanh dây M', price: 15000, category: 'Nước ép', image: '/chanh-day.jpg' },
+    { id: 'm8', name: 'Nước ép Chanh dây L', price: 20000, category: 'Nước ép', image: '/chanh-day.jpg' },
+    { id: 'm9', name: 'Nước ép Dưa hấu M', price: 15000, category: 'Nước ép', image: '/dua-hau.jpg' },
+    { id: 'm10', name: 'Nước ép Dưa hấu L', price: 20000, category: 'Nước ép', image: '/dua-hau.jpg' },
+    { id: 'm11', name: 'Nước ép Cam M', price: 15000, category: 'Nước ép', image: 'cam.jpg' },
+    { id: 'm12', name: 'Nước ép Cam L', price: 20000, category: 'Nước ép', image: 'cam.jpg' },
+    { id: 'm13', name: 'Nước ép Dưa lưới M', price: 20000, category: 'Nước ép', image: '/dua-luoi.jpg' },
+    { id: 'm14', name: 'Nước ép Dưa lưới L', price: 25000, category: 'Nước ép', image: '/dua-luoi.jpg' },
+    { id: 'm15', name: 'Nước ép Thơm M', price: 20000, category: 'Nước ép', image: '/thom.jpg' },
+    { id: 'm16', name: 'Nước ép Thơm L', price: 25000, category: 'Nước ép', image: '/thom.jpg' },
+    { id: 'm17', name: 'Nước ép Táo M', price: 20000, category: 'Nước ép', image: '/tao.jpg' },
+    { id: 'm18', name: 'Nước ép Táo L', price: 25000, category: 'Nước ép', image: '/tao.jpg' },
+    { id: 'm22', name: 'Sinh tố Sapoche M', price: 23000, category: 'Sinh tố', image: '/sto-sapoche.jpg' },
+    { id: 'm23', name: 'Sinh tố Sapoche L', price: 29000, category: 'Sinh tố', image: '/sto-sapoche.jpg' },
+    { id: 'm24', name: 'Sinh tố Xoài M', price: 23000, category: 'Sinh tố', image: '/sto-xoai.jpg' },
+    { id: 'm25', name: 'Sinh tố Xoài L', price: 29000, category: 'Sinh tố', image: '/sto-xoai.jpg' },
+    { id: 'm26', name: 'Sinh tố Bơ M', price: 23000, category: 'Sinh tố', image: '/sto-bo.jpg' },
+    { id: 'm27', name: 'Sinh tố Bơ L', price: 29000, category: 'Sinh tố', image: '/sto-bo.jpg' },
+    { id: 'm28', name: 'Sinh tố Việt quất M', price: 23000, category: 'Sinh tố', image: '/sto-viet-quat.jpg' },
+    { id: 'm29', name: 'Sinh tố Việt quất L', price: 29000, category: 'Sinh tố', image: '/sto-viet-quat.jpg' },
+    { id: 'm30', name: 'Sinh tố Mãng cầu M', price: 23000, category: 'Sinh tố', image: '/sto-mang-cau.jpg' },
+    { id: 'm31', name: 'Sinh tố Mãng cầu L', price: 29000, category: 'Sinh tố', image: '/sto-mang-cau.jpg' },
+    { id: 'm32', name: 'Sinh tố Dâu tây M', price: 23000, category: 'Sinh tố', image: '/sto-dau-tay.jpg' },
+    { id: 'm33', name: 'Sinh tố Dâu tây L', price: 29000, category: 'Sinh tố', image: '/sto-dau-tay.jpg' },
+    { id: 'm34', name: 'Sữa chua Chanh đá M', price: 17000, category: 'Sữa chua', image: '/sc-chua-da.jpg' },
+    { id: 'm35', name: 'Sữa chua Chanh đá L', price: 22000, category: 'Sữa chua', image: '/sc-chua-da.jpg' },
+    { id: 'm36', name: 'Sữa chua Việt quất M', price: 22000, category: 'Sữa chua', image: '/sc-viet-quat.jpg' },
+    { id: 'm37', name: 'Sữa chua Việt quất L', price: 27000, category: 'Sữa chua', image: '/sc-viet-quat.jpg' },
+    { id: 'm38', name: 'Sữa chua Xoài M', price: 22000, category: 'Sữa chua', image: '/sc-xoai.jpg' },
+    { id: 'm39', name: 'Sữa chua Xoài L', price: 27000, category: 'Sữa chua', image: '/sc-xoai.jpg' },
+    { id: 'm40', name: 'Sữa chua Dâu M', price: 22000, category: 'Sữa chua', image: '/sc-dau.jpg' },
+    { id: 'm41', name: 'Sữa chua Dâu L', price: 27000, category: 'Sữa chua', image: '/sc-dau.jpg' },
+    { id: 'm42', name: 'Sữa chua Đào M', price: 22000, category: 'Sữa chua', image: '/sc-dao.jpg' },
+    { id: 'm43', name: 'Sữa chua Đào L', price: 27000, category: 'Sữa chua', image: '/sc-dao.jpg' },
+    { id: 'm44', name: 'Trà chanh M', price: 15000, category: 'Trà', image: '/tra-chanh.jpg' },
+    { id: 'm45', name: 'Trà chanh L', price: 20000, category: 'Trà', image: '/tra-chanh.jpg ' },
+    { id: 'm46', name: 'Trà tắc M', price: 15000, category: 'Trà', image: '/tra-tac.jpg' },
+    { id: 'm47', name: 'Trà tắc L', price: 20000, category: 'Trà', image: '/tra-tac.jpg' },
+    { id: 'm48', name: 'Trà đào M', price: 17000, category: 'Trà', image: '/tra-dao.jpg' },
+    { id: 'm49', name: 'Trà đào L', price: 22000, category: 'Trà', image: '/tra-dao.jpg' },
+    { id: 'm50', name: 'Trà dâu M', price: 17000, category: 'Trà', image: '/tra-dau.jpg' },
+    { id: 'm51', name: 'Trà dâu L', price: 22000, category: 'Trà', image: '/tra-dau.jpg' },
+    { id: 'm52', name: 'Trà mãng cầu M', price: 17000, category: 'Trà', image: '/tra-mang-cau.jpg' },
+    { id: 'm53', name: 'Trà mãng cầu L', price: 22000, category: 'Trà', image: '/tra-mang-cau.jpg' },
+    { id: 'm54', name: 'Trà mận M', price: 17000, category: 'Trà', image: '/tra-man.jpg' },
+    { id: 'm55', name: 'Trà mận L', price: 22000, category: 'Trà', image: '/tra-man.jpg' },
+    { id: 'm56', name: 'Trà Atiso M', price: 17000, category: 'Trà', image: '/tra-atiso.jpg' },
+    { id: 'm57', name: 'Trà Atiso L', price: 22000, category: 'Trà', image: '/tra-atiso.jpg' },
     { id: 'm58', name: 'Chân gà sốt Thái M', price: 49000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm59', name: 'Chân gà sốt Thái L', price: 69000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm60', name: 'Chân gà sốt Thái mix trứng non M', price: 59000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm61', name: 'Chân gà sốt Thái mix trứng non L', price: 79000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm62', name: 'Ram nướng Bình Định', price: 6000, category: 'Ăn vặt', image: 'https://unsplash.com' },
-    { id: 'm63', name: 'Bento', price: 12000, category: 'Ăn vặt', image: 'https://unsplash.com' },
+    { id: 'm63', name: 'Bento', price: 15000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm64', name: 'Hạt hướng dương', price: 10000, category: 'Ăn vặt', image: 'https://unsplash.com' },
-    { id: 'm65', name: 'Hạt dưa', price: 12000, category: 'Ăn vặt', image: 'https://unsplash.com' },
+    { id: 'm65', name: 'Hạt dưa', price: 15000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm66', name: 'Bánh tráng trộn', price: 12000, category: 'Ăn vặt', image: 'https://unsplash.com' },
   ];
 
@@ -886,7 +886,13 @@ if (!user) {
                       ) : (
                         group.items.map((drink, index) => (
                           <div key={drink.id} className="bg-slate-50 rounded-3xl overflow-hidden border hover:shadow-lg transition">
-                            <img src={drink.image} className="h-32 sm:h48 w-full object-cover" alt={drink.name} />
+                            <div className="w-full aspect-[4/3] bg-slate-100 overflow-hidden">
+  <img
+    src={drink.image}
+    alt={drink.name}
+    className="w-full h-full object-cover"
+  />
+</div>
                             <div className="p-4">
                               <h3 className="font-bold text-xl">{drink.name}</h3>
                               <div className="flex justify-between items-center mt-3">
@@ -912,7 +918,13 @@ if (!user) {
                   ) : (
                     filteredMenu.map((drink, index) => (
                       <div key={drink.id} className="bg-slate-50 rounded-3xl overflow-hidden border hover:shadow-lg transition">
-                        <img src={drink.image} className="h-32 sm:h48 w-full object-cover" alt={drink.name} />
+                        <div className="w-full aspect-[4/3] bg-slate-100 overflow-hidden">
+  <img
+    src={drink.image}
+    alt={drink.name}
+    className="w-full h-full object-cover"
+  />
+</div>
                         <div className="p-4">
                           <h3 className="font-bold text-xl">{drink.name}</h3>
                           <div className="flex justify-between items-center mt-3">
