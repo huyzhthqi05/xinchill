@@ -169,6 +169,7 @@ const [tables, setTables] = useState(() => {
   const [orderHistory, setOrderHistory] = useState({});
   const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
   const [editingTableId, setEditingTableId] = useState(null);
+  const [editingTableId, setEditingTableId] = useState(null);
 
   // Lưu lịch sử doanh thu theo ngày vào localStorage
   const getTodayKey = () => {
@@ -308,6 +309,14 @@ if (selectedTable?.status === 'busy' && editingTableId !== selectedTableId) {
   }
   setLastAddedItem(drink.name);
 setShowCartBubble(true);
+setFlyingItem({
+  name: drink.name,
+  id: Date.now()
+});
+
+setTimeout(() => {
+  setFlyingItem(null);
+}, 900);
 
 };
 
@@ -1145,6 +1154,15 @@ if (!user) {
     </div>
   </div>
 )}
+
+{flyingItem && (
+  <div className="fixed bottom-32 right-8 z-[9999] pointer-events-none">
+    <div className="bg-green-500 text-white px-4 py-3 rounded-2xl shadow-2xl animate-flyToCart">
+      🛒 {flyingItem.name}
+    </div>
+  </div>
+)}
+
         {/* NÚT GIỎ HÀNG NỔI */}
         {currentCart.length > 0 && (
           <button
