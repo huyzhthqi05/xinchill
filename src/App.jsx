@@ -392,6 +392,7 @@ const deleteHistoryFromFirestore = async () => {
       0
     );
 
+
     return {
       ...table,
       status: 'busy',
@@ -415,9 +416,29 @@ setActiveTab('tables');
 
     alert(`✅ Xác nhận đơn hàng thành công cho Bàn 0${selectedTableId}!`);
   };
+  const handleCancelOrder = () => {
+  const ok = confirm(`Bạn có chắc muốn hủy đơn Bàn ${selectedTableId}?`);
+
+  if (!ok) return;
+
+  const updatedTables = tables.map(table =>
+    table.id === selectedTableId
+      ? { ...table, status: 'empty', total: 0, currentOrders: [] }
+      : table
+  );
+
+  setTables(updatedTables);
+  saveTablesToFirestore(updatedTables);
+
+  setCurrentCart([]);
+  setEditingTableId(null);
+  setShowCartBubble(false);
+
+  alert(`Đã hủy đơn Bàn ${selectedTableId}`);
+};
 
   // TÍNH NĂNG 2: THANH TOÁN HOÁ ĐƠN VÀ RESET BÀN VỀ TRỐNG
-  const handleCheckout = () => {
+  const handleCheckout = async (method = 'cash') => {
     if (currentCart.length === 0) {
       alert("Bàn này không có món nào để thanh toán!");
       return;
@@ -438,6 +459,7 @@ try {
     total: totalCartPrice,
     items: currentCart,
     createdAt: new Date().toLocaleTimeString(),
+    paymentMethod: method,
   });
 
   setOrderHistory(history);
@@ -754,6 +776,11 @@ if (!user) {
 
                     <div className="text-green-700 font-bold text-xl">
                       {order.total.toLocaleString()}đ
+                      <p className="text-sm font-semibold mt-1">
+  {order.paymentMethod === 'bank'
+    ? '🏦 Chuyển khoản'
+    : '💵 Tiền mặt'}
+</p>
                     </div>
                   </div>
 
@@ -1041,6 +1068,14 @@ if (!user) {
     className="w-full bg-orange-500 text-white rounded-2xl py-4 font-semibold mb-3"
   >
     ✏️ Chỉnh sửa đơn bàn {selectedTableId}
+    {tables.find(t => t.id === selectedTableId)?.status === 'busy' && (
+  <button
+    onClick={handleCancelOrder}
+    className="w-full bg-red-500 text-white rounded-2xl py-4 font-semibold mt-3"
+  >
+    🗑 Hủy đơn hàng
+  </button>
+)}
   </button>
 )}
             <div className="grid grid-cols-2 gap-3 mt-5">
@@ -1108,7 +1143,7 @@ if (!user) {
           <button
             onClick={() => {
               setShowPaymentModal(false);
-              handleCheckout();
+              handleCheckout('cash');
             }}
             className="w-full bg-green-600 text-white rounded-2xl py-4 font-bold"
           >
@@ -1136,7 +1171,7 @@ if (!user) {
           <button
             onClick={() => {
               setShowPaymentModal(false);
-              handleCheckout();
+              handleCheckout('bank');
             }}
             className="w-full bg-green-600 text-white rounded-2xl py-4 font-bold"
           >
