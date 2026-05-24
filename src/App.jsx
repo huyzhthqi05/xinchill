@@ -169,7 +169,6 @@ const [tables, setTables] = useState(() => {
   const [orderHistory, setOrderHistory] = useState({});
   const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
   const [editingTableId, setEditingTableId] = useState(null);
-  const [editingTableId, setEditingTableId] = useState(null);
 
   // Lưu lịch sử doanh thu theo ngày vào localStorage
   const getTodayKey = () => {
