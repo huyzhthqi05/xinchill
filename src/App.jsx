@@ -29,6 +29,7 @@ const getUserDocRef = (name) => {
   // Quản lý Tab hiển thị ở mục bên trái (Mặc định hiện Tab 'order' - Menu món ăn)
   const [activeTab, setActiveTab] = useState('order');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
     setUser(currentUser);
@@ -669,7 +670,36 @@ if (!user) {
 }} className={`w-full rounded-2xl p-4 text-left font-semibold transition ${activeTab === 'revenue' ? 'bg-green-600 shadow-md' : 'hover:bg-green-800'}`}>
               📊 Doanh thu
             </button>
-            <button className="w-full hover:bg-green-800 rounded-2xl p-4 text-left opacity-60">⚙️ Cài đặt</button>
+            <button
+  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+  className="w-full hover:bg-green-800 rounded-2xl p-4 text-left"
+>
+  ⚙️ Cài đặt
+</button>
+
+{isSettingsOpen && (
+  <div className="ml-4 mt-2 space-y-2">
+    <button
+      onClick={() => {
+        setActiveTab('guide');
+        setIsMenuOpen(false);
+      }}
+      className="w-full text-left rounded-xl p-3 hover:bg-green-800 text-sm"
+    >
+      📘 Hướng dẫn sử dụng
+    </button>
+
+    <button
+      onClick={() => {
+        setActiveTab('account');
+        setIsMenuOpen(false);
+      }}
+      className="w-full text-left rounded-xl p-3 hover:bg-green-800 text-sm"
+    >
+      👤 Tài khoản
+    </button>
+  </div>
+)}
           </div>
         </div>
 
@@ -700,6 +730,54 @@ if (!user) {
 
           {/* TAB Doanh thu: lịch sử theo ngày */}
           {/* TAB LỊCH SỬ ĐƠN HÀNG */}
+          {activeTab === 'guide' && (
+  <div className="bg-white rounded-3xl p-5 shadow-sm">
+    <h2 className="text-3xl font-bold mb-5">
+      📘 Hướng dẫn sử dụng
+    </h2>
+
+    <h3 className="text-2xl font-bold mb-3">
+      Bước 1: Chọn bàn
+    </h3>
+
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+      <img src="/guide/buoc1-1.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc1-2.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc1-3.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+    </div>
+
+    <h3 className="text-2xl font-bold mb-3">
+      Bước 2: Thêm món
+    </h3>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+      <img src="/guide/buoc2-1.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc2-2.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc2-3.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc2-4.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+    </div>
+
+    <h3 className="text-2xl font-bold mb-3">
+      Bước 3: Chỉnh sửa đơn và huỷ đơn
+    </h3>
+
+    <div className="mb-8">
+      <img src="/guide/buoc3-1.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+    </div>
+
+    <h3 className="text-2xl font-bold mb-3">
+      Bước 4: Thanh toán
+    </h3>
+
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <img src="/guide/buoc4-1.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc4-2.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc4-3.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc4-4.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+      <img src="/guide/buoc4-5.jpg" className="w-full max-h-[650px] object-contain rounded-2xl bg-slate-100 border" />
+    </div>
+  </div>
+)}
 {activeTab === 'history' && (
   <div className="bg-white rounded-3xl p-5 shadow-sm">
     <button
@@ -1049,17 +1127,25 @@ if (!user) {
                   <p className="font-bold text-green-700 text-sm">{order.price.toLocaleString()}đ</p>
                   <div className="flex gap-2 mt-2">
                     <button 
-                      onClick={() => handleUpdateQty(order.id, -1)} 
-                      className="bg-slate-200 rounded-lg px-2 hover:bg-slate-300 font-bold"
-                    >
-                      -
-                    </button>
+  disabled={
+    tables.find(t => t.id === selectedTableId)?.status === 'busy' &&
+    editingTableId !== selectedTableId
+  }
+  onClick={() => handleUpdateQty(order.id, -1)}
+  className="bg-slate-200 rounded-lg px-2 hover:bg-slate-300 font-bold disabled:opacity-40 disabled:cursor-not-allowed"
+>
+  -
+</button>
                     <button 
-                      onClick={() => handleUpdateQty(order.id, 1)} 
-                      className="bg-slate-200 rounded-lg px-2 hover:bg-slate-300 font-bold"
-                    >
-                      +
-                    </button>
+  disabled={
+    tables.find(t => t.id === selectedTableId)?.status === 'busy' &&
+    editingTableId !== selectedTableId
+  }
+  onClick={() => handleUpdateQty(order.id, 1)}
+  className="bg-slate-200 rounded-lg px-2 hover:bg-slate-300 font-bold disabled:opacity-40 disabled:cursor-not-allowed"
+>
+  +
+</button>
                   </div>
                 </div>
               </div>
