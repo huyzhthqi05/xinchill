@@ -139,7 +139,7 @@ const [tables, setTables] = useState(() => {
     { id: 'm60', name: 'Chân gà sốt Thái mix trứng non M', price: 59000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm61', name: 'Chân gà sốt Thái mix trứng non L', price: 79000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm62', name: 'Ram nướng Bình Định', price: 6000, category: 'Ăn vặt', image: 'https://unsplash.com' },
-    { id: 'm63', name: 'Bento', price: 15000, category: 'Ăn vặt', image: 'https://unsplash.com' },
+    { id: 'm63', name: 'Bento', price: 18000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm64', name: 'Hạt hướng dương', price: 10000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm65', name: 'Hạt dưa', price: 15000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm66', name: 'Bánh tráng trộn', price: 12000, category: 'Ăn vặt', image: 'https://unsplash.com' },
