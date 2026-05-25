@@ -1080,6 +1080,8 @@ if (!user) {
     className="w-full bg-orange-500 text-white rounded-2xl py-4 font-semibold mb-3"
   >
     ✏️ Chỉnh sửa đơn bàn {selectedTableId}
+  </button>
+)}
     {tables.find(t => t.id === selectedTableId)?.status === 'busy' && (
   <button
     onClick={handleCancelOrder}
@@ -1088,8 +1090,7 @@ if (!user) {
     🗑 Hủy đơn hàng
   </button>
 )}
-  </button>
-)}
+ 
             <div className="grid grid-cols-2 gap-3 mt-5">
               <button 
                 onClick={handleSaveTemporary}
