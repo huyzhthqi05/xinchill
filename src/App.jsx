@@ -1258,7 +1258,7 @@ if (!user) {
           </p>
 
           <img
-  src="/qr.png.jpg"
+  src="/qr.png"
   alt="QR chuyển khoản"
   className="w-64 h-64 object-contain mx-auto border rounded-2xl mb-4"
 />
