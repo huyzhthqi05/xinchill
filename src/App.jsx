@@ -713,20 +713,23 @@ if (!user) {
         {/* Khu vực nội dung chính ở giữa */}
         <div className={`${activeTab === 'revenue' ? 'w-full lg:col-span-10' : 'w-full lg:col-span-7'} space-y-4`}>
           {/* Bảng hiển thị Doanh thu tổng */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-3xl p-5 shadow-sm">
-              <p className="text-slate-500">Doanh thu hôm nay</p>
-              <h2 className="text-3xl font-bold mt-2 text-green-700">
-                {realRevenue.toLocaleString()}đ
-              </h2>
-            </div>
-            <div className="bg-white rounded-3xl p-5 shadow-sm">
-              <p className="text-slate-500">Số đơn thành công</p>
-              <h2 className="text-3xl font-bold mt-2">
-                {realOrderCount} đơn
-              </h2>
-            </div>
-          </div>
+          {activeTab === 'revenue' && (
+  <div className="grid grid-cols-2 gap-4">
+    <div className="bg-white rounded-3xl p-5 shadow-sm">
+      <p className="text-slate-500">Doanh thu hôm nay</p>
+      <h2 className="text-3xl font-bold mt-2 text-green-700">
+        {realRevenue.toLocaleString()}đ
+      </h2>
+    </div>
+
+    <div className="bg-white rounded-3xl p-5 shadow-sm">
+      <p className="text-slate-500">Số đơn thành công</p>
+      <h2 className="text-3xl font-bold mt-2">
+        {realOrderCount} đơn
+      </h2>
+    </div>
+  </div>
+)}
 
           {/* TAB Doanh thu: lịch sử theo ngày */}
           {/* TAB LỊCH SỬ ĐƠN HÀNG */}
