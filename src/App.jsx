@@ -144,6 +144,8 @@ const [tables, setTables] = useState(() => {
     { id: 'm64', name: 'Hạt hướng dương', price: 10000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm65', name: 'Hạt dưa', price: 15000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm66', name: 'Bánh tráng trộn', price: 12000, category: 'Ăn vặt', image: 'https://unsplash.com' },
+    { id: 'm67', name: 'Trà Xoài Chanh Dây M', price: 17000, category: 'Trà', image: 'https://unsplash.com' },
+    { id: 'm68', name: 'Trà Xoài Chanh Dây L', price: 25000, category: 'Trà', image: 'https://unsplash.com' },
   ];
 
   // Quản lý từ khóa tìm kiếm món ăn
