@@ -146,6 +146,7 @@ const [tables, setTables] = useState(() => {
     { id: 'm66', name: 'Bánh tráng trộn', price: 12000, category: 'Ăn vặt', image: 'https://unsplash.com' },
     { id: 'm67', name: 'Trà Xoài Chanh Dây M', price: 17000, category: 'Trà', image: '/tra-xoai.jpg' },
     { id: 'm68', name: 'Trà Xoài Chanh Dây L', price: 25000, category: 'Trà', image: '/tra-xoai.jpg' },
+    { id: 'm63', name: 'Bento nhỏ', price: 6000, category: 'Ăn vặt', image: 'https://unsplash.com' },
   ];
 
   // Quản lý từ khóa tìm kiếm món ăn
