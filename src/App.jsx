@@ -77,7 +77,7 @@ const [tables, setTables] = useState(() => {
   const [lastAddedItem, setLastAddedItem] = useState('');
 
   // Menu món ăn cố định của quán
-  const categories = ['Tất cả', 'Nước ép', 'Sinh tố', 'Sữa chua', 'Trà', 'Ăn vặt'];
+  const categories = ['Tất cả', 'Nước ép', 'Sinh tố', 'Sữa chua', 'Trà', 'Ăn vặt', 'Khác'];
   const [selectedMenuCategory, setSelectedMenuCategory] = useState('Tất cả');
 
   const menu = [
@@ -147,6 +147,7 @@ const [tables, setTables] = useState(() => {
     { id: 'm67', name: 'Trà Xoài Chanh Dây M', price: 17000, category: 'Trà', image: '/tra-xoai.jpg' },
     { id: 'm68', name: 'Trà Xoài Chanh Dây L', price: 25000, category: 'Trà', image: '/tra-xoai.jpg' },
     { id: 'm63', name: 'Bento nhỏ', price: 6000, category: 'Ăn vặt', image: 'https://unsplash.com' },
+    { id: 'm64', name: 'Nước suối', price: 10000, category: 'Khác', image: 'https://unsplash.com' },
   ];
 
   // Quản lý từ khóa tìm kiếm món ăn
